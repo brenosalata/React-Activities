@@ -3,6 +3,7 @@ import { Activity } from '../../../app/models/activity';
 import ActivityList from './ActivityList';
 import ActivityDetails from '../details/ActivityDetails';
 import ActivityForm from '../form/ActivityForm';
+import { subscribe } from 'diagnostics_channel';
 
 interface Props
 {
@@ -15,15 +16,16 @@ interface Props
     closeForm: () => void;
     createOrEdit: (activity: Activity) => void;
     deleteActivity: (id: string) => void;
+    submitting : boolean;
 }
 
 export default function ActivityDashboard({ activities, selectActivity, selectedActivity, cancelSelectActivity,
-    editMode, openForm, closeForm, createOrEdit, deleteActivity }: Props)
+    editMode, openForm, closeForm, createOrEdit, deleteActivity, submitting }: Props)
 {
     return (
         <Grid>
             <Grid.Column width='10'>
-                <ActivityList activities={activities} selectActivity={selectActivity} deleteActivity={deleteActivity} />
+                <ActivityList submitting={submitting} activities={activities} selectActivity={selectActivity} deleteActivity={deleteActivity} />
             </Grid.Column>
             <Grid.Column width='6'>
                 { selectedActivity && !editMode &&
@@ -32,7 +34,7 @@ export default function ActivityDashboard({ activities, selectActivity, selected
                     cancelSelectActivity={cancelSelectActivity}
                     openForm={openForm} />}
                 {editMode &&
-                    <ActivityForm createOrEdit={createOrEdit} closeForm={closeForm} activity={selectedActivity} />
+                    <ActivityForm submitting={submitting} createOrEdit={createOrEdit} closeForm={closeForm} activity={selectedActivity} />
                 }
             </Grid.Column>
         </Grid>
