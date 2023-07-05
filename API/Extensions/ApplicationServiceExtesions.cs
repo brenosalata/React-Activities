@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Activities;
 using Application.Core;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -30,6 +28,10 @@ namespace API.Extensions
 
             services.AddMediatR(typeof(List.Handler));
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            //Behavior will happen automatically
+            services.AddFluentValidationAutoValidation();
+            //Will search in assembly validations on Create Class and automatically validate for us
+            services.AddValidatorsFromAssemblyContaining<Create>();
 
             return services;
         }
