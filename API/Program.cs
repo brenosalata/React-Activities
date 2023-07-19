@@ -1,5 +1,9 @@
 using API.Extensions;
 using API.Middleware;
+using Domain;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -7,9 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+//adding opt to require authentication (token)
+builder.Services.AddControllers(opt => {
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -25,6 +34,9 @@ app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 
+//when using token authentication always come first
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -34,9 +46,10 @@ var services = scope.ServiceProvider;
 
 try{
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
     await context.Database.MigrateAsync();
 
-    await Seed.SeedData(context);
+    await Seed.SeedData(context, userManager);
 }catch(Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
