@@ -50,12 +50,17 @@ namespace API.Controllers
         {
             if(await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("Username is already taken");
+                //Setting modelstate erro we are able to return a validation problem and get the errors inside an array with the error property in target
+                ModelState.AddModelError("username", "Username taken");
+                return ValidationProblem();
             }
 
             if(await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email is already taken");
+                //we doing this to display these validations into Register and Validation error components
+                //ValidationProblem returns what we have in the model state
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
