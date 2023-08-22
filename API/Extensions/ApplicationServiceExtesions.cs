@@ -1,7 +1,9 @@
 using Application.Activities;
 using Application.Core;
+using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -32,6 +34,10 @@ namespace API.Extensions
             services.AddFluentValidationAutoValidation();
             //Will search in assembly validations on Create Class and automatically validate for us
             services.AddValidatorsFromAssemblyContaining<Create>();
+            
+            //isso faz com que nosso servico UserAccesor seja valido para ser injetado no nosso projeto Application Handlers
+            services.AddHttpContextAccessor();
+            services.AddScoped<IUserAccessor, UserAccessor>();
 
             return services;
         }
