@@ -18,6 +18,8 @@ namespace Persistence
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityAttendee>  ActivityAttendees { get; set; }
 
+        public DbSet<Photo> Photos { get; set; }
+
         //Criando esse metodo para criar nossa relacao de user para activity
         //"ef migration" na mao - entre varias aspas pq nao e migration o que fazemos aqui
         //Many to many relationship
